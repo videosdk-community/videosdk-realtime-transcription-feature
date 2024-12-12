@@ -2,20 +2,20 @@
 
 Real-time transcription turns spoken words into instant text, transforming how meetings, webinars, and classes are experienced. With VideoSDK, integrating this feature into your React app is intuitive and customizable.
 
----
+[![Watch the video](https://img.youtube.com/vi/bhPgjMXL6H8/0.jpg)](https://youtu.be/bhPgjMXL6H8)
 
 ## Getting Started
 
 Begin by cloning the example repository:
 
 ```bash
-git clone https://github.com/sumit-so/videosdk-react-example.git
+https://github.com/videosdk-community/videosdk-realtime-transcription-feature.git
 ```
 
 Navigate to the cloned folder:
 
 ```bash
-cd videosdk-react-example
+cd videosdk-realtime-transcription-feature
 ```
 
 Install the required dependencies:
@@ -24,30 +24,37 @@ Install the required dependencies:
 npm install
 ```
 
+### Generate auth token
+
+Generate a temporary token from your [Video SDK Account](https://app.videosdk.live/).:
+
+copy .env.example
+
+```shell
+cp .env.example .env
+```
+
+Update the .env File:
+
+```shell
+VITE_VIDEOSDK_TOKEN = "videoSDK's authToken"
+```
+
 ---
 
 ## App Architecture
 
 The application follows a modular architecture for clarity and scalability:
 
-```
-├── public
-├── src
-│   ├── components
-│   │   ├── joinscreen/index.jsx
-│   │   ├── meetingview/index.jsx
-│   │   ├── controls/index.jsx
-│   ├── API.js
-│   ├── App.jsx
-│   ├── ..
-├── ..
-```
+![Application Architecture for VideoSDK's realtime transcription feature](/public/images/app-architecture.png)
 
 ---
 
 ## Breaking Down the Code
 
-### Step 1: Import Transcription Hook
+### useTranscription Hook
+
+VideoSDK’s useTranscription hook provides method to start and stop transcription, updating the text in real time. The onTranscriptionStateChanged event handler manages the transcription state, while onTranscriptionText updates the displayed transcribed text.
 
 ```javascript
 import { useTranscription } from '@videosdk.live/react-sdk';
@@ -62,7 +69,11 @@ const { startTranscription, stopTranscription } = useTranscription({
 });
 ```
 
-### Step 2: Manage Transcription State
+### Manage Transcription State
+
+You can track the current transcription state using the transcriptionState property from the useMeeting hook.
+
+- By dynamically reflecting these states in your UI or logs, you can provide real-time feedback to users about the transcription process.
 
 ```javascript
 import { useMeeting } from "@videosdk.live/react-sdk";
@@ -77,7 +88,9 @@ import { useMeeting } from "@videosdk.live/react-sdk";
 const { transcriptionState } = useMeeting({...});
 ```
 
-### Step 3: Constants for Transcription Events
+### All Possible States for Transcription
+
+The key states you may encounter during the transcription lifecycle:
 
 ```javascript
 import { Constants } from '@videosdk.live/react-sdk';
@@ -92,7 +105,13 @@ const {
 
 ---
 
-## Handling Start and Stop of Transcription
+## Handling the Start and Stop of Transcription & managing application UI
+
+By utilizing the useMeeting and useTranscription hooks from VideoSDK, you can track the transcription's current state and toggle it as needed.
+
+- **Tracking State**: The transcriptionState from useMeeting monitors if transcription is starting, started, stopping, or stopped.
+- **Dynamic Toggles**: The handleTranscription function uses this state to determine whether to call startTranscription or stopTranscription.
+- **Live Feedback**: As transcription progresses, real-time updates are displayed, ensuring users always know the transcription status.
 
 Here’s how you can handle transcription state and manage UI updates:
 
@@ -104,15 +123,21 @@ import {
 } from '@videosdk.live/react-sdk';
 
 export const MeetingView = () => {
+  // Stores live transcription text
   const [transcriptionText, setTranscriptionText] = useState('');
+
+  // Tracks the current transcription state
   const { transcriptionState } = useMeeting();
 
   const { startTranscription, stopTranscription } = useTranscription({
+    // Updates transcription text on new data
     onTranscriptionText: (data) => {
-      setTranscriptionText(data.text);
+      const { text } = data;
+      setTranscriptionText(text);
     },
   });
 
+  // Possible transcription states
   const {
     TRANSCRIPTION_STARTED,
     TRANSCRIPTION_STARTING,
@@ -121,6 +146,7 @@ export const MeetingView = () => {
   } = Constants.transcriptionEvents;
 
   const handleTranscription = () => {
+    // Toggles transcription based on the current state
     if (transcriptionState === TRANSCRIPTION_STARTED) {
       stopTranscription();
     } else if (transcriptionState === TRANSCRIPTION_STOPPED) {
@@ -131,12 +157,14 @@ export const MeetingView = () => {
   return (
     <div>
       <button onClick={handleTranscription}>
+        {/* Dynamically changes button text */}
         {transcriptionState === TRANSCRIPTION_STARTED
           ? 'Stop Transcription'
           : transcriptionState === TRANSCRIPTION_STARTING
             ? 'Starting...'
             : 'Start Transcription'}
       </button>
+      {/* Displays live transcription text */}
       {transcriptionState === TRANSCRIPTION_STARTED && (
         <div>{transcriptionText}</div>
       )}
@@ -149,7 +177,19 @@ export const MeetingView = () => {
 
 ## Webhooks
 
-To integrate webhooks for transcription events:
+Now that you’ve seen how easy it is to integrate real-time transcription into your application, there’s even more you can do—utilizing webhooks to bridge the gap between your system and VideoSDK.
+
+```javascript
+const handleTranscription = () => {
+  if (transcriptionState === TRANSCRIPTION_STARTED) {
+    stopTranscription();
+  } else if (transcriptionState === TRANSCRIPTION_STOPPED) {
+    startTranscription({
+      webhookUrl: 'your webhook url',
+    });
+  }
+};
+```
 
 ### Transcription Started
 
@@ -186,5 +226,3 @@ To integrate webhooks for transcription events:
 For more detailed information, visit the [VideoSDK Documentation](https://docs.videosdk.live/).
 
 ---
-
-Happy coding! 🚀

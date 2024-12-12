@@ -43,9 +43,7 @@ export const MeetingView = ({ meetingId, onMeetingLeave }) => {
     if (transcriptionState === TRANSCRIPTION_STARTED) {
       stopTranscription();
     } else if (transcriptionState === TRANSCRIPTION_STOPPED) {
-      startTranscription({
-        webhookUrl: 'your webhook url',
-      });
+      startTranscription();
     }
   };
 
