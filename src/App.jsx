@@ -4,7 +4,7 @@ import { MeetingProvider } from '@videosdk.live/react-sdk';
 import { Container } from './components/container';
 import { MeetingView } from './components/meetingview';
 import { JoinScreen } from './components/joinscreen';
-import { authToken, createMeeting } from './API';
+import { authToken, createMeeting, validateMeeting } from './API';
 
 function App() {
   const [meetingId, setMeetingId] = useState(null);
@@ -12,11 +12,11 @@ function App() {
 
   const getMeetingId = async (id) => {
     const meetingId =
-      id == null ? await createMeeting({ token: authToken }) : id;
+      id == null ? await createMeeting({ token: authToken }) : await validateMeeting(id);
     setMeetingId(meetingId);
   };
 
-  const onMeetingLeave = () => {
+  const onMeetingLeft = () => {
     setMeetingId(null);
   };
 
@@ -32,7 +32,7 @@ function App() {
             webcamEnabled: true,
           }}
         >
-          <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
+          <MeetingView meetingId={meetingId} onMeetingLeft={onMeetingLeft} />
         </MeetingProvider>
       ) : (
         <JoinScreen

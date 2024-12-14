@@ -13,10 +13,10 @@ import copyIcon from '../../../public/icons/copy.png';
 import { Controls } from '../controls';
 import { Participants } from '../participants';
 
-export const MeetingView = ({ meetingId, onMeetingLeave }) => {
+export const MeetingView = ({ meetingId, onMeetingLeft }) => {
   const [joined, setJoined] = useState(null);
   const [isCopied, setIsCopied] = useState(false);
-  const [transcriptionText, setTranscription] = useState('');
+  const [transcriptionText, setTranscriptionText] = useState('');
 
   const { join, participants, transcriptionState } = useMeeting({
     onMeetingJoined: () => setJoined('JOINED'),
@@ -26,7 +26,7 @@ export const MeetingView = ({ meetingId, onMeetingLeave }) => {
     onTranscriptionStateChanged: (status) => {},
     onTranscriptionText: (data) => {
       const { text } = data;
-      setTranscription(text);
+      setTranscriptionText(text);
     },
   });
 
@@ -81,7 +81,7 @@ export const MeetingView = ({ meetingId, onMeetingLeave }) => {
             <div className="flex justify-between w-[96%] left-[2%] py-4 bottom-0 items-center z-20 absolute rounded-lg shadow-lg">
               <div className="flex justify-between w-full items-center gap-4">
                 {/* audio/video controls */}
-                <Controls onMeetingLeave={onMeetingLeave} />
+                <Controls onMeetingLeft={onMeetingLeft} />
 
                 {/* handle transcription */}
                 <div className="flex gap-4">
