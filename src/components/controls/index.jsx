@@ -6,7 +6,7 @@ import { ButtonIcon } from '../../@ui/button-icon';
 import audioIcon from '../../../public/icons/microphone.png';
 import videoIcon from '../../../public/icons/videocam.png';
 
-export const Controls = ({ onMeetingLeave }) => {
+export const Controls = ({ onMeetingLeft }) => {
   const { toggleMic, toggleWebcam, end } = useMeeting();
   const [micClicked, setMicClicked] = useState(false);
   const [webcamClicked, setWebcamClicked] = useState(false);
@@ -16,6 +16,11 @@ export const Controls = ({ onMeetingLeave }) => {
     setMicClicked((prev) => !prev); // Toggle state
   };
 
+  const handleMeetingLeft = () => {
+    end();
+    onMeetingLeft();
+  };
+
   const handleWebcamClick = () => {
     toggleWebcam();
     setWebcamClicked((prev) => !prev); // Toggle state
@@ -23,12 +28,12 @@ export const Controls = ({ onMeetingLeave }) => {
 
   return (
     <div className="flex items-center justify-left space-x-4 bg-white px-4 py-4 rounded-md">
-      <ControlButton text="End" onClick={() => end()} bgColor="bg-red-500" />
       <ControlButton
-        text="Leave"
-        onClick={() => onMeetingLeave()}
+        text="End"
+        onClick={handleMeetingLeft}
         bgColor="bg-red-500"
       />
+
       {/* Mic Button */}
       <div className="relative">
         <ButtonIcon onClick={handleMicClick}>

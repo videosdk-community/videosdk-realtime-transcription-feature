@@ -2,7 +2,7 @@
 
 Real-time transcription turns spoken words into instant text, transforming how meetings, webinars, and classes are experienced. With VideoSDK, integrating this feature into your React app is intuitive and customizable.
 
-[![Watch the video](https://img.youtube.com/vi/bhPgjMXL6H8/0.jpg)](https://youtu.be/bhPgjMXL6H8)
+[![Watch the video](/public/images/thumbnail.png)](https://youtu.be/bhPgjMXL6H8)
 
 ## Getting Started
 
